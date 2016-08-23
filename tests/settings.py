@@ -11,10 +11,10 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test',
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': '',
-        'HOST': os.environ.get('POSTGRES_HOST', 'postgresql'),
+        'NAME': 'test_pgfulltext',
+        'USER': os.environ.get('POSTGRES_USER', 'test_pgfulltext'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'test_pgfulltext'),
+        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
         'PORT': '',
     }
 }
@@ -27,7 +27,7 @@ STATICFILES_DIRS = ()
 SECRET_KEY = 'di!n($kqa3)nd%ikad#kcjpkd^uw*h%*kj=*pm7$vbo6ir7h=l'
 INSTALLED_APPS = (
     'djorm_pgfulltext',
-    'djorm_pgfulltext.tests',
+    'tests',
 )
 
 import django

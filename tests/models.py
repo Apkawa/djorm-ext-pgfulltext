@@ -3,8 +3,8 @@ import json
 
 from django.db import models, connections
 
-from ..fields import VectorField
-from ..models import SearchManager
+from djorm_pgfulltext.fields import VectorField
+from djorm_pgfulltext.models import SearchManager
 
 
 class Person(models.Model):

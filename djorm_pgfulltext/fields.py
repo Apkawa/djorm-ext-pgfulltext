@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-
-# Python3 string compadability
-try:
-    basestring
-except NameError:
-    basestring = str
+from __future__ import unicode_literals
+import six
 
 import django
 from django.db import models
@@ -13,7 +9,6 @@ from djorm_pgfulltext.utils import adapt
 
 
 class VectorField(models.Field):
-
     def __init__(self, *args, **kwargs):
         kwargs['default'] = ''
         kwargs['editable'] = False
@@ -43,30 +38,36 @@ class VectorField(models.Field):
     def get_prep_value(self, value):
         return value
 
+
 try:
     from south.modelsinspector import add_introspection_rules
+
     add_introspection_rules(rules=[], patterns=['djorm_pgfulltext\.fields\.VectorField'])
 except ImportError:
     pass
-
 
 if django.VERSION >= (1, 7):
     # Create custom lookups for Django>= 1.7
 
     from django.db.models import Lookup
 
+
     def quotes(wordlist):
         return ["%s" % adapt(x.replace("\\", "")) for x in wordlist]
+
 
     def startswith(wordlist):
         return [x + ":*" for x in quotes(wordlist)]
 
+
     def negative(wordlist):
         return ['!' + x for x in startswith(wordlist)]
+
 
     class TSConfig(object):
         def __init__(self, name):
             self.name = name
+
 
     class FullTextLookupBase(Lookup):
 
@@ -74,7 +75,7 @@ if django.VERSION >= (1, 7):
             lhs, lhs_params = qn.compile(self.lhs)
             rhs, rhs_params = self.process_rhs(qn, connection)
 
-            if isinstance(rhs_params, basestring):
+            if isinstance(rhs_params, six.string_types):
                 rhs_params = [rhs_params]
 
             if type(rhs_params[0]) == TSConfig:
@@ -88,6 +89,7 @@ if django.VERSION >= (1, 7):
                 rest = (" & ".join(self.transform.__call__(rhs_params)),)
 
             return cmd, rest
+
 
     class FullTextLookup(FullTextLookupBase):
         """This lookup scans for exact matches in the full text index.
@@ -124,6 +126,7 @@ if django.VERSION >= (1, 7):
         def transform(self, *args):
             return quotes(*args)
 
+
     class FullTextLookupStartsWith(FullTextLookupBase):
         """This lookup scans for full text index entries that BEGIN with
         a given phrase, like:
@@ -139,6 +142,7 @@ if django.VERSION >= (1, 7):
         def transform(self, *args):
             return startswith(*args)
 
+
     class FulTextLookupNotStartsWith(FullTextLookupBase):
         """This lookup scans for full text index entries that do not begin with
         a given phrase, like:
@@ -153,6 +157,7 @@ if django.VERSION >= (1, 7):
 
         def transform(self, *args):
             return negative(*args)
+
 
     VectorField.register_lookup(FullTextLookup)
     VectorField.register_lookup(FullTextLookupStartsWith)

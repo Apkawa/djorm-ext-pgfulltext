@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='book',
             name='author',
-            field=models.ForeignKey(to='djorm_pgfulltext.Person'),
+            field=models.ForeignKey(to='tests.Person'),
             preserve_default=True,
         ),
         migrations.CreateModel(
@@ -78,6 +78,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=32)),
                 ('description', models.TextField()),
+                ('data', models.TextField()),
                 ('search_index', djorm_pgfulltext.fields.VectorField(default=b'', serialize=False, null=True, editable=False, db_index=True)),
                 ('description_search_index', djorm_pgfulltext.fields.VectorField(default=b'', serialize=False, null=True, editable=False, db_index=True)),
             ],

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from itertools import repeat
+from __future__ import unicode_literals
 import six
+
+from itertools import repeat
 
 from django.db import models, connections
 from django.db.models.query import QuerySet
@@ -312,7 +314,7 @@ class SearchQuerySet(QuerySet):
         if query:
             function = "to_tsquery" if raw else "plainto_tsquery"
             ts_query = smart_text(
-                "%s('%s', %s)" % (function, config, adapt(query))
+                "%s('%s', %s)" % (function, config, smart_text(adapt(query)))
             )
 
             full_search_field = "%s.%s" % (

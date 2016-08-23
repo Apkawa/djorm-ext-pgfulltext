@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import django
 from django.db import transaction
 from django.utils.unittest import TestCase
 
-from djorm_pgfulltext.tests.models import Book
-from djorm_pgfulltext.tests.models import Person
-from djorm_pgfulltext.tests.models import Person2
-from djorm_pgfulltext.tests.models import Person3
-from djorm_pgfulltext.tests.models import Person4
-from djorm_pgfulltext.tests.models import Person5
+from .models import Book
+from .models import Person
+from .models import Person2
+from .models import Person3
+from .models import Person4
+from .models import Person5
 
 
 class FtsSetUpMixin:
@@ -101,13 +102,20 @@ class TestFts(FtsSetUpMixin, TestCase):
         if not hasattr(transaction, "atomic"):
             return
 
+        self.assertEqual(Person2.objects.count(), 0)
+
         with transaction.atomic():
             obj = Person2.objects.create(
                 name=u'Pepa',
                 description=u"Is a housewife",
             )
+            obj2 = Person2.objects.create(
+                name=u'Pepa Two',
+                description=u"Is a wife",
+            )
 
             obj.update_search_field(using='default')
+            obj2.update_search_field(using='default')
 
         qs = Person2.objects.search(query="Pepa")
         self.assertEqual(qs.count(), 2)
@@ -149,6 +157,12 @@ class TestFts(FtsSetUpMixin, TestCase):
         )
 
         self.assertEqual(Person5.objects.all().count(), 1)
+
+    def test_unicode_search(self):
+        Person.objects.create(name='Василий Ерохин')
+        qs = Person.objects.search('Ерохин')
+        self.assertEqual(qs.count(), 1)
+
 
 
 class TestFullTextLookups(FtsSetUpMixin, TestCase):
