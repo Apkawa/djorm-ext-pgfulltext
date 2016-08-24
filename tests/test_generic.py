@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import django
 from django.db import transaction
+from django.utils.encoding import smart_str
 from django.utils.unittest import TestCase
 
 from .models import Book
@@ -11,6 +12,9 @@ from .models import Person2
 from .models import Person3
 from .models import Person4
 from .models import Person5
+from .models import (
+    MultiConfigModel,
+)
 
 
 class FtsSetUpMixin:
@@ -164,9 +168,7 @@ class TestFts(FtsSetUpMixin, TestCase):
         self.assertEqual(qs.count(), 1)
 
 
-
 class TestFullTextLookups(FtsSetUpMixin, TestCase):
-
     def skipUnlessDjango17(self):
         if django.VERSION < (1, 7):
             self.skipTest("Requires Django>=1.7")
@@ -203,3 +205,17 @@ class TestFullTextLookups(FtsSetUpMixin, TestCase):
 
         # make sure it is preserved after re-query
         self.assertEquals(pq.all()[0].pk, self.p1.pk)
+
+
+class MultiConfigTestCase(TestCase):
+    def test_unaccent(self):
+        MultiConfigModel.objects.create(
+            name=u'Pepa',
+        )
+        MultiConfigModel.objects.create(
+            name=u'Pèpâ',
+        )
+
+        qs = MultiConfigModel.objects.search(query=u"Pèpâ", raw=True)
+        print smart_str(qs.query)
+        self.assertEqual(qs.count(), 1)

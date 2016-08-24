@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* improved tests, more fixes
 * Fix for empty search_vector
 * Add travis build logo
 * Fix travis postgres host

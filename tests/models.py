@@ -14,8 +14,8 @@ class Person(models.Model):
 
     objects = SearchManager(
         fields=('name', 'description'),
-        search_field = 'search_index',
-        config = 'names',
+        search_field='search_index',
+        config='names',
     )
 
     def __unicode__(self):
@@ -33,8 +33,8 @@ class Person2(models.Model):
 
     objects = SearchManager(
         fields=(('name', 'A'), ('description', 'B')),
-        search_field = 'search_index',
-        config = 'names',
+        search_field='search_index',
+        config='names',
     )
 
     def __unicode__(self):
@@ -48,9 +48,9 @@ class Person3(models.Model):
 
     objects = SearchManager(
         fields=('name', 'description'),
-        search_field = 'search_index',
-        auto_update_search_field = True,
-        config = 'names'
+        search_field='search_index',
+        auto_update_search_field=True,
+        config='names'
     )
 
     def __unicode__(self):
@@ -69,9 +69,9 @@ class Person4(models.Model):
 
     objects = SearchManager(
         fields=('name', 'description'),
-        search_field = 'search_index',
-        auto_update_search_field = True,
-        config = 'names'
+        search_field='search_index',
+        auto_update_search_field=True,
+        config='names'
     )
 
     def __unicode__(self):
@@ -109,8 +109,8 @@ class Person5(models.Model):
 
     objects = SearchManager(
         fields=tuple(),
-        search_field = 'search_index',
-        config = 'names',
+        search_field='search_index',
+        config='names',
         auto_update_search_field=True,
     )
 
@@ -125,9 +125,24 @@ class Book(models.Model):
 
     objects = SearchManager(
         fields=('name',),
-        search_field = 'search_index',
-        auto_update_search_field = True,
-        config = 'names'
+        search_field='search_index',
+        auto_update_search_field=True,
+        config='names'
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class MultiConfigModel(models.Model):
+    name = models.CharField(max_length=32)
+    search_index = VectorField()
+
+    objects = SearchManager(
+        fields=('name',),
+        search_field='search_index',
+        auto_update_search_field=True,
+        config='names',
     )
 
     def __unicode__(self):
